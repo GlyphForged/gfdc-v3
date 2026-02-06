@@ -1,0 +1,98 @@
+############################
+# Go build artifacts
+############################
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go test binaries & coverage
+*.test
+*.out
+
+# Build output directories
+bin/
+build/
+dist/
+
+############################
+# Go tooling / workspace
+############################
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Module cache / vendoring
+pkg/
+vendor/
+
+# Debug binaries
+__debug_bin
+
+############################
+# Logs & runtime data
+############################
+
+# Application logs
+*.log
+logs/
+log/
+
+# Runtime temp data
+tmp/
+temp/
+*.tmp
+
+############################
+# Environment & secrets
+############################
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# TLS / secrets
+*.pem
+*.key
+*.crt
+
+############################
+# Databases / state
+############################
+
+# SQLite or similar
+*.db
+*.sqlite
+*.sqlite3
+
+############################
+# NeoVim / Vim
+############################
+
+# Swap / backup / undo
+*.swp
+*.swo
+*.un~
+*~
+
+# Tree-sitter / LSP caches
+.cache/
+lua-language-server/
+
+############################
+# OS noise
+############################
+
+.nfs*
+
+############################
+# Misc
+############################
+
+# Backups
+*.bak
+*.old
