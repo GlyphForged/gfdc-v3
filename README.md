@@ -85,7 +85,38 @@ So I've boiled it down to two states: Public & Admin.
 
 ## Architecture
 
-WIP
+### System Overview
+
+- Single monolithic Go server.
+- Server renders all HTML.
+- HTMX is used to request partial HTML from the server.
+- Server handles two kinds of requests:
+  - Full page requests
+  - Fragment requests
+
+### Major Components
+
+- Request handling
+  - Routes incoming HTTP requests and decides what logic runs.
+  - Owns every request until it is fully resolved.
+- Rendering
+  - Owns templates, layouts, and HTML fragments.
+  - Provides the rendered page to be shown to the client.
+- Content managements
+  - Owns blog posts, projects, and read/write rules.
+  - Effectively the database which the renderer calls from.
+- Authentication
+  - Owns admin login state and access checks.
+  - Simple "is this request legit?"" check.
+- Static assets
+  - Serves CSS, images, and WASM game files.
+
+### Request Boundaries
+
+- Public routes are strictly read-only, no auth.
+- State mutation is restricted to authenticated requests via admin pages.
+- Authentication is enforced before any write logic runs.
+- WASM treated as static assets embedded in server-rendered pages.
 
 ## Tech Stack & Y Tho
 
