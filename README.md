@@ -1,6 +1,17 @@
 # GlyphForged.com v3
 
-## Hashtag Goals
+Written by Aaron Chavez
+
+I've decided to make my design doc my top-level readme for a few reasons. First,
+it gives me a place to store my thoughts as I build the strategy/design. Second,
+if anyone is weird enough to want to know why I built the site the way I did,
+they get an admittedly unadvisable peek into how my gray matter works. Finally,
+since this isn't a user-facing application, it doesn't make too much sense for
+me to keep "usage instructions" or similar in the README. This is admittedly
+equal parts manifesto and design doc. I would apologize, but if you keep reading
+you've brought it on yourself.
+
+## 1. Hashtag Goals
 
 I'm becoming quickly disenchanted with NodeJS and the whole "JavaScript all the
 things" ecosystem. This is not a moral or judgemental stance, purely a
@@ -38,7 +49,7 @@ learning all the ways I messed it up and re-writing it better, but not quite
 right. Lather, rinse, repeat until you have a code base you aren't completely
 ashamed by.
 
-## Explicit Goals (TL;DR)
+### Explicit Goals (TL;DR)
 
 - Wat it is
   - A clean personal CV/showcase/personal musings site
@@ -53,7 +64,7 @@ ashamed by.
   - Projects, Games, Musings sections
   - Rants updated via CRUD post-login
 
-## Anti-Goals & Restraints
+## 2. Anti-Goals & Restraints
 
 - Wat it not do
   - Client-heavy JS (No frontend framework, no build)
@@ -61,7 +72,7 @@ ashamed by.
   - Non-admin accounts (Single trusted editor)
   - Dynamic Content/SPA (No Client-side routing or state)
   - Real-time shenanigans (No websockets, polling, live updates)
-- How it tied up
+- How it tied down
   - Minimal JS
   - One server binary running on one droplet
   - Smol dependency list (External imports must have a reason to exist)
@@ -70,7 +81,7 @@ ashamed by.
   - Smol server
   - EZ Backup
 
-## Usage
+## 3. Usage
 
 We really only need two "usage" modes for this site, but it behooves me to stop
 and think about this. I should keep in mind and put in writing somewhere a clear
@@ -83,7 +94,7 @@ So I've boiled it down to two states: Public & Admin.
 - Admin (Yours truly)
   - Authenticated. Control over the ravings. CRUD access to blog.
 
-## Architecture
+## 4. Architecture
 
 ### System Overview
 
@@ -118,17 +129,117 @@ So I've boiled it down to two states: Public & Admin.
 - Authentication is enforced before any write logic runs.
 - WASM treated as static assets embedded in server-rendered pages.
 
-## Tech Stack & Y Tho
+## 5. Tech Stack & Y Tho
 
-WIP
+### Backend: Go
 
-## Breadcrumbs (Site Structure)
+A Go server will compile to a single executable binary, minimizing complexity
+and dependency. Allows for my goal of one server on one droplet with easy
+backups/rollbacks/etc. Additionally, this will help enforce my server rendered
+requirement. Go has a strong standard library for HTTP which allows for minimal
+dependencies. Finally, using Go will force me to think about things that have
+been historically abstracted away in prior web dev projects.
 
-WIP
+### Frontend: HTMX
+
+The language of the web is HTML. To that end, where partial page changes are
+required, I will be using HTMX. This ensures I do not need to build a dedicated
+front-end application, I can simply query the server for the updated sections
+of the page on an as-needed basis. No jQuery fragility, no clunky reloads, and
+no overly complicated SPAs. HTMX is not a core dependency, but a nice-to-have
+extension to my architecture. Core site functionality will not depend on it, and
+if for any reason HTMX is unavailable or removed, the site will still function
+albeit with more full-page reloads. HTMX is currently planned primarily during
+admin workflows, though it may be used to reduce unnecessary navigation on the
+user side, eventually. HTMX will NOT introduce user-side state.
+
+### The Rejects
+
+Note: None of this is objective, purely a best-fit analysis. Most of my web-dev
+experience is in SPAs and purely static sites.
+
+- Node.js + SPA (React/Angular/etc)
+  - Unnecessary complexity
+  - Too many sec vulns for a simple CV site
+- Purely Static Site
+  - Not enough flexibility
+  - Not future-proof
+
+## 6. Breadcrumbs (Site Structure)
+
+### Top-Level
+
+- Landing Page
+- Projects
+- Games
+- Blog/Musings
+- About/CV
+
+### URL Shape
+
+- Projects, games, and musing are listed on dedicated index pages.
+- Individual blog posts/games/projects are accessed via stable slugs.
+  - i.e. `/projects/{slug}`, `/games/{slug}`, `/musings/{slug}`.
+- Admin access via subdomain.
+  - subdomain.glyphforged.com
+  - Any unauthorized access to this will lead to the login page.
+  - Admin subdomain not linked from public pages and intentionally unindexed.
+- Large projects may eventually also live in subdomains.
+  - i.e. f1.glyphforged.com, pendejos.glyphforged.com, etc..
+  - These are independent deployments
+  - Not part of the main site's routing or content.
+  - If it doesn't "fit" on the main site, it gets a subdomain.
 
 ## Data Structures
 
-WIP
+### Musing
+
+Wat it is: A blog post with one of my ramblings.
+
+Wat it need:
+- Title
+- Slug
+- Content
+- Creation Date
+- Updated Date (Optional)
+- Status (Published, Draft, Archived)
+  - Visibility:
+    - Published - Public
+    - Draft - Admin-Only
+    - Archived - Admin-Only
+- Tags
+
+### Project
+
+Wat it is: A page showcasing a project or group of projects.
+
+Wat it need:
+- Title
+- Slug
+- Creation Date
+- Tags
+- WASMLocation (Optional)
+
+### Game
+
+Wat it is: A page showcasing a game I've built/helped build.
+
+Wat it need:
+- Title
+- Slug
+- Creation Date
+- Tags
+- GameURL (Assume itch.io game)
+- WASMLocation(?) (Do I self-host or just port form itch?)
+
+### AdminUser
+
+Wat it is: Ad admin user
+
+Wat it need:
+- Username
+- Salted pw hash
+- Created date
 
 ## Bouncer (Auth Model)
 
