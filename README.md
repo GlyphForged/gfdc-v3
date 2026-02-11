@@ -190,7 +190,7 @@ experience is in SPAs and purely static sites.
   - Not part of the main site's routing or content.
   - If it doesn't "fit" on the main site, it gets a subdomain.
 
-## Data Structures
+## 7. Data Structures
 
 ### Musing
 
@@ -203,11 +203,10 @@ Wat it need:
 - Creation Date
 - Updated Date (Optional)
 - Status (Published, Draft, Archived)
+- Tags
   - Visibility:
     - Published - Public
-    - Draft - Admin-Only
-    - Archived - Admin-Only
-- Tags
+    - Draft & Archived - Admin-only. Public view renders 404.
 
 ### Project
 
@@ -216,6 +215,7 @@ Wat it is: A page showcasing a project or group of projects.
 Wat it need:
 - Title
 - Slug
+- Description
 - Creation Date
 - Tags
 - WASMLocation (Optional)
@@ -227,6 +227,7 @@ Wat it is: A page showcasing a game I've built/helped build.
 Wat it need:
 - Title
 - Slug
+- Description/Blurb
 - Creation Date
 - Tags
 - GameURL (Assume itch.io game)
