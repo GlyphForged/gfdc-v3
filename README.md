@@ -238,13 +238,53 @@ Wat it is: An admin user. Should just be me.
 
 Wat it need:
 - Username - Immutable
+- Name - Immutable
 - PasswordHash
 - Created date - Immutable
 - LastLogin
 
-## Bouncer (Auth Model)
+## 8. Bouncer (Auth Model)
 
-WIP
+### Auth Model
+
+Multi-admin capable, but flat. Any authorized user will be an admin, if you
+aren't an admin, you're public. Login is a simple User + PW Hash (salted, of
+course). No UI reset flow is needed, recovery will be handled via a CLI
+subcommand built into the main binary. No HTTP-based recovery.
+
+### Session Model
+
+Server-side session store with sessions stored in memory. This allows for
+easily revoked sessions with explicit control. Sliding expiration (inactivity)
+with manual invalidation on logout. Expiration is derived from inactivity
+duration on interaction. Expiration happens @ 1-hour since last activity. Call
+me paranoid, but if passwords are reset, all sessions should immediately be
+invalidated by clearing the session store.
+
+All admin routes require a valid session before handler logic executes. This
+check will be performed for each interaction that may lead to state mutation.
+Templates do not perform authorization checks. (Auth before render).
+
+Each session stores:
+- userID
+- createdAt
+- lastActivityAt
+
+On every authed request:
+- Look up session by ID
+- If not found, reject
+- If expred, delete session, reject.
+- If valid:
+  - Update lastActivityAt
+  - Proceed
+
+### Da Cookies
+
+- SessionID stored in HttpOnly cookie.
+- Cookie marked secure (HTTPS only).
+- SameSite policy = Lax to mitigate CSRF
+- Cookie scoped to admin subdomain only.
+  - (If admin lives on admin.gf.com, cookie is not valid for gf.com)
 
 ## HTMXWTFBBQ (HTMX Patterns)
 
