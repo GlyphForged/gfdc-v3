@@ -192,55 +192,55 @@ experience is in SPAs and purely static sites.
 
 ## 7. Data Structures
 
-### Musing
+- Only `Published` items are visible to public requests.
+- `Draft` and `Archived` items return 404 to public users.
+- All fields are mutable unless otherwise noted.
+
+### Musings
 
 Wat it is: A blog post with one of my ramblings.
 
 Wat it need:
 - Title
-- Slug
+- Slug(s)
 - Content
-- Creation Date
-- Updated Date (Optional)
-- Status (Published, Draft, Archived)
+- Creation Date - Immutable
+- Published At
+- Updated Date (Optional) (most recent change only)
 - Tags
+- Status (Published, Draft, Archived)
   - Visibility:
     - Published - Public
     - Draft & Archived - Admin-only. Public view renders 404.
 
-### Project
+### Project/Game
 
 Wat it is: A page showcasing a project or group of projects.
 
 Wat it need:
+- Type (Enum - Game, Project, Etc)
 - Title
-- Slug
-- Description
-- Creation Date
-- Tags
-- WASMLocation (Optional)
-
-### Game
-
-Wat it is: A page showcasing a game I've built/helped build.
-
-Wat it need:
-- Title
-- Slug
+- Slug(s)
 - Description/Blurb
-- Creation Date
+- Creation Date - Immutable
+- Updated Date
 - Tags
-- GameURL (Assume itch.io game)
-- WASMLocation(?) (Do I self-host or just port form itch?)
+- HostingType (Enum)
+- URI (WASMlocation, itch.io URL, etc.)
+- Status (Published, Draft, Archived)
+  - Visibility:
+    - Published - Public
+    - Draft & Archived - Admin-only. Public view renders 404.
 
-### AdminUser
+### AdminUser - Private
 
-Wat it is: Ad admin user
+Wat it is: An admin user. Should just be me.
 
 Wat it need:
-- Username
-- Salted pw hash
-- Created date
+- Username - Immutable
+- PasswordHash
+- Created date - Immutable
+- LastLogin
 
 ## Bouncer (Auth Model)
 
