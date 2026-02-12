@@ -286,9 +286,41 @@ On every authed request:
 - Cookie scoped to admin subdomain only.
   - (If admin lives on admin.gf.com, cookie is not valid for gf.com)
 
-## HTMXWTFBBQ (HTMX Patterns)
+## 9. HTMXWTFBBQ (HTMX Patterns)
 
-WIP
+### Where it's used
+
+- Admin CRUD flows (create, edit, delete musings)
+- Preview functionality (blog at first, projects/games later?)
+- That's really it for now.
+- Fragment endpoints must return meaningful HTML when accessed directly.
+- Fragment enpoints must not rely on client-side state.
+
+### Responses
+
+- Full page responses for:
+  - Public navigation
+  - Initial Loads
+  - Non-HTMX clients
+- Fragments for:
+  - HTMX-triggered admin actions/state mutations.
+- Note: Fragment endpoints never return JSON.
+
+### Epic Fails
+
+- When an HTMX request fails auth:
+  - Treat as unauthenticated, no matter the reason
+  - Unauthorized Admin route > Redirect to Login
+  - Public access to draft/archive > 404 page
+- Validation failures > Return HTML fragment with errors.
+- Log all unauthorized admin access attempts
+
+### The State of State
+
+- The client is never an authority.
+- Server is the sole source of truth.
+- HTMX does NOT introduce application state.
+- All mutations occur via normal HTTP semantics.
 
 ## The Soapbox (Blog CRUD Flow)
 
