@@ -205,7 +205,7 @@ Wat it need:
 - Slug(s)
 - Content
 - Creation Date - Immutable
-- Published At
+- Published At - Immutable
 - Updated Date (Optional) (most recent change only)
 - Tags
 - Status (Published, Draft, Archived)
@@ -322,9 +322,64 @@ On every authed request:
 - HTMX does NOT introduce application state.
 - All mutations occur via normal HTTP semantics.
 
-## The Soapbox (Blog CRUD Flow)
+## 10. The Soapbox (Blog CRUD Flow)
 
-WIP
+CUD is all admin-only. Public cannot take CUD actions.
+
+### Create
+
+- New musings created with:
+  - Status = Draft
+  - CreationDate set (immutable after set)
+  - NULL PublishedAt value
+- After creation, redirect to edit page
+- Draft may have initially empty fields
+- Title & Content required to publish
+
+### Read
+
+- Public Read
+  - Only published
+  - Archived/Draft -> 404
+- Admin Read
+  - All stauses accessible
+
+### Update
+
+#### Edit
+
+- Edit returns HTML fragments
+- Validation failures return form with errors
+- Successful updates return updated form fragment w/ success indicator
+- If Status == Published
+  - Updates affect live version immediately
+  - UpdatedDate is updated
+- If Status == Draft || Archived
+  - Status remains unchanged
+- Slug changes
+  - Old slug added to alias list
+  - 301 redirect maintained
+
+#### Publish
+
+- Requires Status == Draft || Archived
+- Successful publish returns updated form fragment w/ success indicator
+- On Publish:
+  - Status == Published
+  - PublishedAt == dateTime of first publish (Immutable)
+- If Archive being re-published, update UpdatedAt
+
+### Delete (Archive, really)
+
+- Status = Archived
+- Public requests now return 404
+- Slug aliases resolve to canonical slug
+- Canonical slug returns 404 if archived
+
+### Preview
+
+- Preview will never change state, despite being Admin only
+- Preview will render draft content via a fragment
 
 ## The Fun Zone (WASM Games and Project Strats)
 
