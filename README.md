@@ -22,7 +22,7 @@ and minor gripes. At the end of the day, this site doesn't need to be too much.
 
 So I'm kind of going back to basics, while still scratching the "learn a new
 technology" itch. I've never written anything in Go before, so why not learn
-with a simple little website server? I've never written a site in HTMX before,
+with a simple little website server? I've never written a site with HTMX before,
 so why not my personal site?
 
 LLM/AI disclosure: I am not a militant anti-AI person, but I do see some
