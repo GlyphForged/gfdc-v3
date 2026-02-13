@@ -28,9 +28,9 @@ so why not my personal site?
 LLM/AI disclosure: I am not a militant anti-AI person, but I do see some
 problems with some utilizations of LLMs. I don't like the idea of passing off
 my learning and/or thinking to the computer, that is not, in my humble opinion,
-its purpose. To quote Frank Herbert: “What do such machines really do? They
+its purpose. To quote Frank Herbert: "What do such machines really do? They
 increase the number of things we can do without thinking. Things we do without
-thinking-there’s the real danger.” But neither do I think LLMs are an
+thinking-there's the real danger." But neither do I think LLMs are an
 inherently bad thing. I do see real value in their ability to lower the barrier
 to information.
 
@@ -201,6 +201,7 @@ experience is in SPAs and purely static sites.
 Wat it is: A blog post with one of my ramblings.
 
 Wat it need:
+
 - Title
 - Slug(s)
 - Content
@@ -213,11 +214,12 @@ Wat it need:
     - Published - Public
     - Draft & Archived - Admin-only. Public view renders 404.
 
-### Project/Game
+### Project/Game (Showcase)
 
 Wat it is: A page showcasing a project or group of projects.
 
 Wat it need:
+
 - Type (Enum - Game, Project, Etc)
 - Title
 - Slug(s)
@@ -237,6 +239,7 @@ Wat it need:
 Wat it is: An admin user. Should just be me.
 
 Wat it need:
+
 - Username - Immutable
 - Name - Immutable
 - PasswordHash
@@ -266,11 +269,13 @@ check will be performed for each interaction that may lead to state mutation.
 Templates do not perform authorization checks. (Auth before render).
 
 Each session stores:
+
 - userID
 - createdAt
 - lastActivityAt
 
 On every authed request:
+
 - Look up session by ID
 - If not found, reject
 - If expred, delete session, reject.
@@ -381,18 +386,71 @@ CUD is all admin-only. Public cannot take CUD actions.
 - Preview will never change state, despite being Admin only
 - Preview will render draft content via a fragment
 
-## The Fun Zone (WASM Games and Project Strats)
+## 11. The Fun Zone (WASM Games and Project Strats)
+
+Both projects and games are unified under a single identity: Showcase
+
+### Rendering Model
+
+Projects and games share a base layout template.
+Every project/game should:
+
+- Be server-rendered HTML
+- Include
+  - Title
+  - Description/Blurb
+  - Tags
+  - Embedded project/game section
+
+### Hosting Model
+
+- The server is only responsible for delivering static files and HTML.
+- Server does NOT handle game runtime behavior.
+
+- HostingType = Enum [External, SelfHosted]
+- If HostingType == External
+  - Render embedded iframe/external link
+  - Server does not proxy content
+  - Server does not fetch remote content
+- If HostingType == SelfHosted
+  - WASM + JS glue served as static assets
+  - Embedded directly in page
+  - Server does not execute game logic
+
+### Static Asset Strategy
+
+- Static directory holds all static content, from images to WASM
+- WASM files must be served with correct MIME type: `application/wasm`
+- Static assets are read-only and not modified at runtime
+- Each project/game has its own subfolder within the `/static/` directory
+  - i.e. `/static/showcase/{slug}/`
+
+### Isolation Boundaries
+
+- Subdomains (i.e. larger projects) are separate. If we link to a subdomained
+  project we are sending the client to a different server
+- Self-hosted WASM runs in the browser
+- The server should NEVER
+  - Trust anything from the WASM runtime
+  - Accept POSTS from game runtime to admin endpoints
+- Game runtimes have no privileged communication with the server beyond public
+  HTTP endpoints
+
+## 12. Where It Lives (Deployment & ENV)
+
+- "Cattle over pets"
+- Fully containerized via Docker
+- Disposable Digital Ocean droplet (unless I cave and toss this on AWS)
+- Docer compose as single source of truth
+- Go server container
+- Self-hosted databse container
+  - PostgreSQL
+- Caddy for reverse proxy and automatic TLS (because I wanna learn another new thing)
+
+## 13. OpSec (Security Considerations)
 
 WIP
 
-## Where It Lives (Deployment & ENV)
-
-WIP
-
-## OpSec (Security Considerations)
-
-WIP
-
-## Wanna Do These Later
+## 14. Wanna Do These Later
 
 - CRUD updates for projects and games
