@@ -439,18 +439,112 @@ Every project/game should:
 ## 12. Where It Lives (Deployment & ENV)
 
 - "Cattle over pets"
+  - Everything is containerized
+  - Nothing critical lives exclusively on the host
 - Fully containerized via Docker
+  - Caddy (Reverse proxy + Auto-TLS)
+  - Go Server App
+  - PostresSQL
+  - App and DB are internal-only
+    - Communication via Docker network
+    - DB is never publicly exposed
+- Docker Volumes for storage
+  - `postgres-data` -> Persistent DB storage
+  - `static-assets` -> self-hosted static content
 - Disposable Digital Ocean droplet (unless I cave and toss this on AWS)
-- Docer compose as single source of truth
-- Go server container
-- Self-hosted databse container
-  - PostgreSQL
-- Caddy for reverse proxy and automatic TLS (because I wanna learn another new thing)
+- Docker compose as single source of truth
 
-## 13. OpSec (Security Considerations)
+### Static Content
+
+- Static content lives in a separate GH repo (for now)
+- App container mounts the `static-assets` Docker volume on boot
+- Static files served directly from the mounted volume
+- CI pipeline
+  - Build static artifacts where applicable
+  - SSH into droplet
+  - Sync files into `static-assets` volume
+
+### App CI/CD
+
+On push to main:
+1. Build Docker image
+2. Run tests
+3. Push image to container registry
+4. SSH into droplet
+5. Pull latest image
+6. Run `docker compuse up -d`
+
+### Data Management
+
+- PostgreSQL uses a named Docker volume for persistence
+- Backups via weekly `pg_dump`
+  - Dev machine runs cronjob to perform the following:
+    - SSH into droplet
+    - Run `pg_dump` on prod db
+    - scp dump file to dev machine
+    - Directories based on week number
+    - Cleanup backups > 12 weeks old
+
+### MI Process
+
+- In the event of an unrecoverable failure
+  - Provision new droplet
+  - Install Docker
+  - Clone main site repo
+  - Run `docker compose up -d`
+  - Restore db from backup
+  - Re-sync static content repo
+
+## 13. Spying on myself (Observability)
+
+I tend to over-engineer this kind of shit, so in the effort of reminding myself
+to KISS, gonna log observability goals here.
+
+The system needs to answer:
+- Is the site up?
+- Is the db reachable?
+- Are requests succeeding?
+- Any weirdness going on? (4xx/5xx spikes, etc.)
+
+### Logging Strat
+
+Application Logs
+
+- Go app outputs structured JSON logs to stdout including:
+  - Timestamp
+  - Request ID
+  - Method
+  - Path
+  - Response status
+  - Latency
+  - Error details
+
+- Caddy logs include:
+  - Enable access logs
+  - Enable error logs
+
+`docker logs` to access.
+
+### Checkups
+
+App should expose `/health`
+
+Page verifies:
+- App is running
+- db connection is reachable
+- 200 if healthy, 5xx if dependencies unavailable
+- Exposed by Caddy
+
+Use DigitalOcean tooling for system metrics monitoring and alerting
+
+Use host tooling for updtime monitoring and alerting
+
+## 14. OpSec (Security Considerations)
 
 WIP
 
-## 14. Wanna Do These Later
+## 15. Wanna Do These Later
 
 - CRUD updates for projects and games
+- Cloud db backup
+- Log aggregation?
