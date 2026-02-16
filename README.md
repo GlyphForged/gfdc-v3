@@ -541,10 +541,64 @@ Use host tooling for updtime monitoring and alerting
 
 ## 14. OpSec (Security Considerations)
 
-WIP
+The goal here is to reduce the potential attack surface and enforce some basic
+trust boundaries. It's just a CV site, but script kiddies gonna script kiddie.
+
+### Transport Security
+
+- All traffic over HTTPS.
+- Caddy handles TLS provisioning
+- HTTP redirects to HTTPS
+
+### Network Isolation
+
+- Caddy responsible for exposing public ports
+- Go app and DB containers remain internal only
+- DB is NEVER publicly accessible
+- Inter-container comm happens via Docker network
+
+### Auth and Session Security
+
+- Server-side session store with in-memory sessions
+- Session IDs SHA generated
+- Session IDs stores in:
+  - HttpOnly cookie
+  - Secure cookie
+  - SameSite=Lax
+- Sliding expiration (1-hour)
+- Invalid session treated as unauthorized
+- Logout explicitly invalidates the session
+- Password reset clears all active sessions
+- Admin routes demand authenticated session 
+- Auth checks BEFORE handler logic
+- Public access to admin areas returns 404
+
+### Defensive lines
+
+- Basic rate limiting enforced at the proxy layer
+  - Login endpoint rate-limited to mitigate brute-force attempts
+  - General request rate limits to prevent abuse and resource exhaustion
+  - IP throttling on excessive failed attempts
+
+### Bobby Tables
+
+- State-mutating input is validated server-side
+- Client-side validation is purely UX enhancement
+- Slug changes are sanitized and validated before persistence
+
+### Failure & Breach Response
+
+In case of suspected compromise:
+
+1. Rotate admin credentials.
+2. Clear all active sessions.
+3. Rebuild and redeploy containers.
+4. Restore database from known-good backup if necessary.
+5. Review logs for suspicious activity.
 
 ## 15. Wanna Do These Later
 
 - CRUD updates for projects and games
 - Cloud db backup
 - Log aggregation?
+- Enable HSTS
