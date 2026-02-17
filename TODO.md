@@ -29,6 +29,7 @@ ServeMux is the request multiplexer (router)
   - Server is sandboxed to this directory
 `http.FileServer(...)` gives us an `http.Handler` back. This handler is what's
   saved as `fileServer`.
+
 FileServer:
   - Reads files
   - Parses MIME types
@@ -42,8 +43,12 @@ FileServer:
   - Sets 'listen on' address
   - Sets router to use (in this case our `mux` router)
 
-Finally we `ListenAndServe()` as infinitum unless we hit an error, in which case
+Finally we `ListenAndServe()` ad infinitum unless we hit an error, in which case
 we panic and log the error.
+
+`ListenAndServe()`
+- Opens a TCP listener
+- Accepts connections
 
 Best Guess Call Stack:
 ```
