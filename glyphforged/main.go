@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +20,8 @@ func main() {
 		log.Fatalf("failed to build server: %v", err)
 	}
 
-	log.Println("Server running on port 8080")
+	msg := fmt.Sprintf("Serving on port %v", listenAddr)
+	log.Println(msg)
 	if err := http.ListenAndServe(listenAddr, server.Routes()); err != nil {
 		log.Fatalf("server stopped: %v", err)
 	}

@@ -76,3 +76,46 @@ Client receives response
 That's it for today. More tomorrow.
 
 ---
+
+## Day 2... 6 days later... - Feb 22
+
+Alright, so, turns out the Flu fucking sucks, and gives one zero brain power for
+dev work. Awesome. But I'm feeling just well enough now to poke around a bit at
+templates, something I completely forgot about.
+
+I've got a basic system in mind, but need to do some more digging to figure out
+how to connect a PostgreSQL db to the pipeline sooner than I thought, a lot of
+this page data is going to come from that db, and a lot of the router/renderer
+design is on hold until I get that built.
+
+So for now, I've got 3 template folders: layouts/, partials/, and pages/, goal
+is that they do what they say on the tin. As the pages grow and I piece together
+a semblance of a theme, those will be where I build each part. The renderer
+should stitch them together nicely as needed, pulling data from the db where it
+fits. Need to get data for some basic test pages built soon.
+
+Additionally, I've updated the main.go topull in a separate server module.
+While the binary is monolithic, I don't think the code-base should be, so I'm
+starting to think about what goes where. For now, my thought is routing and
+rendering are really the server's domain. Auth and such can be separate modules
+built and pulled into `main.go`.
+
+Took some time to sit down and add some clear commentary on the sections that I
+found myself having to go back and re-learn. Hopefully this makes spin-up next
+time faster, as half the code-base was forgotten by the time I came back. As a
+working dad of 2 I really shouldn't have expected to hit this code base daily.
+
+Server is where I will build out basic pathing, though the slug handling I
+believe will need some additional logic in a helper function or two. Slowly
+getting the hang of Golang methods on a struct. The syntax was a bit odd until I
+got a feel for what they're going for. Still kind of prefer Rust's impl. I swear
+I'm going to wind up talking myself into doing v4 in Rust...
+
+Finally, added some future-proofing with a quick update to how we decide on
+where we are serving. Should come in useful when we containerize, or could just
+be one more line to refactor. Time will tell.
+
+Doesn't feel like a ton done today, but the concepts are becoming more concrete,
+and I'm only feeling more confident about my decision to break away from the "JS
+all the things" stack. Seriously, this feels much simpler than the Node
+ecosystem.
