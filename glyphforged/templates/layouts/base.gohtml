@@ -1,0 +1,24 @@
+{{ define "base" }}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- TODO: Dynamic Page Titles -->
+    <title>Glyphforged.com</title>
+    <!-- TODO: Dynamic Descriptions -->
+    <meta name="description" content="Forged from the terminal">
+    <link rel="icon" href="/public/favicon.ico">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <!-- Include HTMX -->
+    <script defer src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+  <body>
+    {{ template "main-header" .Page}}
+    <main id="main-content" class="main-shell">
+    {{ template "home" .Page }}
+    </main>
+    {{ template "main-footer" .Page }}
+  </body>
+</html>
+{{ end }}
