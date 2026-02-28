@@ -116,6 +116,7 @@ So I've boiled it down to two states: Public & Admin.
 - Content managements
   - Owns blog posts, projects, and read/write rules.
   - Effectively the database which the renderer calls from.
+  - SQLite - Embedded DB, no need for a container.
 - Authentication
   - Owns admin login state and access checks.
   - Simple "is this request legit?"" check.
@@ -444,13 +445,13 @@ Every project/game should:
 - Fully containerized via Docker
   - Caddy (Reverse proxy + Auto-TLS)
   - Go Server App
-  - PostresSQL
+  - SQLite DB
   - App and DB are internal-only
     - Communication via Docker network
     - DB is never publicly exposed
 - Docker Volumes for storage
-  - `postgres-data` -> Persistent DB storage
   - `static-assets` -> self-hosted static content
+  - `app-data` - SQLite file
 - Disposable Digital Ocean droplet (unless I cave and toss this on AWS)
 - Docker compose as single source of truth
 
@@ -476,14 +477,7 @@ On push to main:
 
 ### Data Management
 
-- PostgreSQL uses a named Docker volume for persistence
-- Backups via weekly `pg_dump`
-  - Dev machine runs cronjob to perform the following:
-    - SSH into droplet
-    - Run `pg_dump` on prod db
-    - scp dump file to dev machine
-    - Directories based on week number
-    - Cleanup backups > 12 weeks old
+<!-- TODO: New Data Management Section for SQLIte -->
 
 ### MI Process
 

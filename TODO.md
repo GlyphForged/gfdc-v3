@@ -119,3 +119,25 @@ Doesn't feel like a ton done today, but the concepts are becoming more concrete,
 and I'm only feeling more confident about my decision to break away from the "JS
 all the things" stack. Seriously, this feels much simpler than the Node
 ecosystem.
+
+## Day 3 - Base of Data - Feb 28
+
+Dropping PostgreSQL for SQLite. Realized that when I decided on an SQL DB I just
+picked PostgreSQL out of habit and instinct rather than taking a moment to think
+about what I really need. Given the nature of this site, I don't need much. A
+simple SQLite db file will handle everything I need and make backups and such so
+much simpler. Keeps the Docker container tight as well.
+
+Got the skeleton of an SQLite db started. Looks like I'll never fully get rid of
+the shackles of a package manager, but I can justify a package during the bin
+build tied to a static version and updated only when I feel the need to tap into
+new functionality of bug fixes. My understanding is the way Go handles SQL is
+that I should be able to swap interfaces at will if I build it right, including
+if I decide to build my own as a fun side-projects.
+
+I'll need to go through and update the README at some point to match our new
+SQLite direction. Should probably do that before it comes old tech debt. For
+now, we just need to read and seed, we can handle building the update and delete
+interfaces later. Once we have a solid idea of how the DB works, I can build out
+the rest of the tables and such, create some more simple seed data, and go back
+to building templates. Once we have solid templates, it's CSS time, baybee!!!!
